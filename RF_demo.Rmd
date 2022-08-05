@@ -1,0 +1,169 @@
+---
+title: "RF_Demo"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## I. RF result
+
+### I.1 Final features, Confusion matrix, Recall, ACC, and AUC
+
+```{r}
+names(df_RF6)
+result6
+print(rf.strata6)
+```
+
+### I.2 Feature Importance Plot
+
+```{r}
+as.data.frame(rf.strata6$importance) %>% arrange(MeanDecreaseAccuracy)
+varImpPlot(rf.strata6)
+```
+
+### I.3 Prob output of testing data
+
+```{r}
+View(result)
+```
+
+
+
+## II. RF classification cutoff/threshold
+
+### II.1 Prob hist: x-axis is prob_F
+
+```{r}
+fig1
+```
+
+### II.2 TPR vs FPR curve: find a vertical line that max TPR and min FPR
+
+```{r}
+fig2
+```
+
+### II.3 ROC curve:trade-off between sensitivity (or TPR) and specificity (1 – FPR)
+
+```{r}
+fig_roc
+```
+
+### II.4 PR curve: Precision(TP/pred P) vs Recall(TP/actual P)
+Higher threshold will increase recall much but only slightly decrease precision
+```{r}
+fig_pr
+```
+
+### II.5 New cutoff: Confusion matrix before vs after
+result_new['prob_F']<0.55=T(give more T)
+```{r}
+table(result_new['actual'][[1]], result_new['pred_new'][[1]])
+table(result['actual'][[1]], result['pred'][[1]])
+```
+
+
+## III. RF interpretation
+
+### III.1 PDP plot: yhat=prob_F
+How different values of 1 interested feature changes prob_F
+```{r}
+plot.pdp #diff_week_mean: nonlinear
+plot.pdp1 #with_web: no web=F, with web=T
+plot.pdp2 #FB_Page_Follows: more follows=T
+plot.pdp3 #Avg_Rating_mean: nonlinear,high rating=T
+plot.pdp4 #State_G: high group(3)=T
+```
+
+### III.2 Prob_T Decomposition
+
+```{r}
+View(result_feature)
+
+#Most frequent deterministic feature
+#diff_week_mean>State_G>Avg_Rating_mean>FB_Page_Follows>with_web
+f1
+f2
+f3
+
+#Positive vs Negative contribution
+summary(result_feature$diff_week_mean) #negative contribution dominates
+summary(result_feature$State_G) #balanced contribution
+summary(result_feature$Avg_Rating_mean) #balanced contribution
+summary(result_feature$FB_Page_Follows) #negative contribution dominates
+summary(result_feature$with_web) #balanced contribution
+```
+
+### III.3 SHAP & Error Analysis
+
+```{r}
+View(result_FN)
+View(result_FP)
+```
+
+#### Check Top5 FN error individual 
+```{r}
+#704:all negative, but convert(have profile in many platform but no data, reviews 10 years ago)
+error_index<-704
+shap_individual(error_index)  
+#View(df_shap_all[sample==F,][error_index,])
+#View(df_shap_sim[sample==F,][error_index,])
+error_id<-df_shap_all[sample==F,][error_index,'Id'][[1]]
+#View(df_raw[df_raw['Id']==error_id,])
+              
+#496:have profile in many platform but no data, new reviews 7/20
+error_index<-496
+shap_individual(error_index)  
+#View(df_shap_all[sample==F,][error_index,])
+#View(df_shap_sim[sample==F,][error_index,])
+error_id<-df_shap_all[sample==F,][error_index,'Id'][[1]]
+#View(df_raw[df_raw['Id']==error_id,])
+
+#837/848:HA only, no data
+error_index<-837
+shap_individual(error_index)  
+#View(df_shap_all[sample==F,][error_index,])
+#View(df_shap_sim[sample==F,][error_index,])
+error_id<-df_shap_all[sample==F,][error_index,'Id'][[1]]
+#View(df_raw[df_raw['Id']==error_id,])
+
+#595:only HA(1 review), no web, low state(Minneapolis)
+error_index<-595
+shap_individual(error_index)  
+#View(df_shap_all[sample==F,][error_index,])
+#View(df_shap_sim[sample==F,][error_index,])
+error_id<-df_shap_all[sample==F,][error_index,'Id'][[1]]
+#View(df_raw[df_raw['Id']==error_id,])
+```
+
+#### Check FP error individual
+```{r}
+#184:HA/Google, mid size good review, active
+error_index<-184
+shap_individual(error_index)  
+#View(df_shap_all[sample==F,][error_index,])
+#View(df_shap_sim[sample==F,][error_index,])
+error_id<-df_shap_all[sample==F,][error_index,'Id'][[1]]
+#View(df_raw[df_raw['Id']==error_id,])
+```
+
+
+## IV. Random Other Info
+
+### IV.1 Correlation Heatmap
+
+```{r}
+ggcorrplot::ggcorrplot(cor(df_RF6 %>% select(-Conversion)))
+```
+
+### II.2 PCA: only 2PC in plot
+
+```{r}
+fig
+prin_comp
+summary(prin_comp)
+```
+
