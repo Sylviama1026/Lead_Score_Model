@@ -85,13 +85,7 @@ df_agg<-df_RF  %>%
          Avg_Rating_mean=Avg_Rating_sum/P_num,
          diff_week_mean=diff_week_sum/P_num)
 
-
-#Simple model
-nRareSamples =  900 * 0.05
-df_RF6<-df_agg %>% select(with_web,FB_Page_Follows,diff_week_mean,Avg_Rating_mean,
-                          State_G,Conversion)
-
-df_RF6$with_web<-ifelse(df_RF6$with_web==F,0,1)
+df_agg$with_web<-ifelse(df_agg$with_web==F,0,1)
 State_num<-function(x){
   if(x['State_G'] =='High'){
     out<-3
@@ -101,7 +95,14 @@ State_num<-function(x){
     out<-1
   }
 }
-df_RF6$State_G<-apply(df_RF6,1,State_num)
+df_agg$State_G<-apply(df_agg,1,State_num)
+
+write.csv(df_agg,file='df_agg.csv')
+
+#Simple model
+nRareSamples =  900 * 0.05
+df_RF6<-df_agg %>% select(with_web,FB_Page_Follows,diff_week_mean,Avg_Rating_mean,
+                          State_G,Conversion)
 
 rf.strata6 = randomForest(Conversion~.,data=df_RF6,strata=df_RF6$Conversion,
                           sampsize=c(nRareSamples,nRareSamples),

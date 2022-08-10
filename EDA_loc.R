@@ -4,7 +4,7 @@ df_clean %>% select(Id,Conversion,occupation,Category,business,State,City,Postal
 
 df_state<-df_clean %>% group_by(State) %>% 
   summarise(n = n(), c=sum(Conversion)) %>%
-  mutate(p=round(n/nrow(df),2),pc=round(c/n*100,2)) %>% arrange(desc(pc))
+  mutate(p=round(n/nrow(df_clean),2),pc=round(c/n*100,2)) %>% arrange(desc(pc))
 View(df_state)
 df_state$state<-df_state$State
 

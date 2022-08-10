@@ -106,16 +106,16 @@ View(result_FP)
 
 #### Check Top5 FN error individual 
 ```{r}
-#704:all negative, but convert(have profile in many platform but no data, reviews 10 years ago)
-error_index<-704
+#186:only HA, reviews 10 years ago
+error_index<-186
 shap_individual(error_index)  
 #View(df_shap_all[sample==F,][error_index,])
 #View(df_shap_sim[sample==F,][error_index,])
 error_id<-df_shap_all[sample==F,][error_index,'Id'][[1]]
 #View(df_raw[df_raw['Id']==error_id,])
               
-#496:have profile in many platform but no data, new reviews 7/20
-error_index<-496
+#820:reviews long time ago
+error_index<-820
 shap_individual(error_index)  
 #View(df_shap_all[sample==F,][error_index,])
 #View(df_shap_sim[sample==F,][error_index,])
