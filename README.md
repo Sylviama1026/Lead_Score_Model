@@ -34,3 +34,9 @@ Predict Conversion Probability of Potential Pros(Leads), aiming to **Improve Sal
   * The final logistic regression we applied, all the data manipulation procedures are included, and it is the main source for the presentation 
 * Final_Model_impute: 
   * Try to impute NA instead of replacing it as 0
+  
+## Thumbtack access only:
+I reorganized all my source code for this project in case of future reference. Hope it covers all the team might need for future usage. https://drive.google.com/drive/folders/1Y0ZdKlLtXcs0Pdh42ZjbPmw7jkefbVpq?usp=sharing
+
+Also, I wrote a directory in case certain files are hard to find:
+https://docs.google.com/document/d/13XpkhiddVzaWEeIghcnzblFNJEuv8EAeG2WVMVPZXCU/edit?usp=sharing
